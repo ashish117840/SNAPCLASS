@@ -15,7 +15,7 @@ def main():
         case 'student':
             student_screen()
 
-        case 'None':
+        case None:
             home_screen()
 
 main()
