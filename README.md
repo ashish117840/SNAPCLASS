@@ -1,117 +1,154 @@
-# 🎓 SNAPCLASS – AI Video & Voice Attendance System
+# 🎓 SnapClass — AI-Powered Video & Voice Attendance System
 
-<div align="center">
-
-![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge\&logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-Web_App-red?style=for-the-badge\&logo=streamlit)
-![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=for-the-badge\&logo=supabase)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-Web_App-red?style=for-the-badge&logo=streamlit)
+![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=for-the-badge&logo=supabase)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-### Intelligent Attendance Management using AI-powered Face & Voice Recognition
+### Intelligent classroom attendance using AI-powered face & voice recognition
 
-🌐 **Live Demo:** https://snapclass-ashish-main.streamlit.app/
-
-</div>
+🌐 **Live Demo:** [snapclass-ashish-main.streamlit.app](https://snapclass-ashish-main.streamlit.app/)
 
 ---
 
 ## 📖 Overview
 
-**SNAPCLASS** is an AI-powered attendance management system that automates classroom attendance using **face recognition** and **voice recognition**. It eliminates manual attendance, improves accuracy, and provides teachers with an easy-to-use dashboard for managing classes and attendance records.
+**SnapClass** automates classroom attendance by combining **facial recognition** and **voice/speaker identification**, removing the need for manual roll calls. Teachers get a simple dashboard to manage subjects, students, and attendance logs — all backed by a lightweight, cloud-hosted database.
 
-The application is built with **Python**, **Streamlit**, and **Supabase**, making it lightweight, scalable, and easy to deploy.
+Built entirely in **Python**, powered by **Streamlit** for the interface and **Supabase** for storage, SnapClass is easy to run locally and simple to deploy.
 
-<!-- Improved README: clearer structure, badges, logo, and concise instructions -->
-# SNAPCLASS
+---
 
-![SNAPCLASS logo](https://i.ibb.co/YTYGn5qV/logo.png)
+## ✨ Features
 
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/streamlit-%3E%3D1.0-orange)](https://streamlit.io)
-[![License](https://img.shields.io/badge/license-ADD--LICENSE-lightgrey)](LICENSE)
+- 🎥 **Face recognition attendance** — identifies students from a live camera feed using facial embeddings
+- 🎙️ **Voice recognition attendance** — verifies identity through speaker recognition as a secondary/alternate check
+- 👩‍🏫 **Teacher dashboard** — manage subjects, enroll students, and review attendance records
+- ☁️ **Cloud-backed storage** — all student, subject, and attendance data stored in Supabase
+- ⚡ **Lightweight & deployable** — runs locally or on Streamlit Community Cloud with minimal setup
 
-Streamline classroom attendance using AI — face recognition (dlib + pre-trained models) and speaker identification (resemblyzer). Built with Streamlit and Supabase for storage.
+---
 
-## Quick links
+## 🛠️ Tech Stack
 
-- Entrypoint: `app.py`
-- Pipelines: `src/pipelines/face_pipeline.py`, `src/pipelines/voice_pipeline.py`
-- Database helpers: `src/database/db.py`
-- Config: `src/database/config.py`
+| Layer | Technology |
+|---|---|
+| Language | Python 3.10+ |
+| Web App / UI | Streamlit |
+| Database | Supabase |
+| Face Recognition | `dlib`, `face_recognition_models` (128-d embeddings + SVM classifier) |
+| Voice Recognition | `resemblyzer`, `librosa` |
 
-## Quick start (copy-paste)
+---
 
-1. Clone the repo and change directory:
+## 📂 Project Structure
+
+```
+SNAPCLASS/
+├── app.py                          # Streamlit entrypoint
+├── requirements.txt                # Python dependencies
+├── src/
+│   ├── pipelines/
+│   │   ├── face_pipeline.py        # Face embedding + SVM classifier training
+│   │   └── voice_pipeline.py       # Voice embedding + speaker identification
+│   └── database/
+│       ├── db.py                   # Database helper functions
+│       └── config.py               # Supabase configuration
+└── .gitignore
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/ashish117840/SNAPCLASS.git
 cd SNAPCLASS
 ```
 
-2. Recommended: create a Conda environment (Windows):
+### 2. Set up your environment
 
-```powershell
+**Recommended (Conda — best for Windows, avoids native build issues):**
+
+```bash
 conda create -n snapclass python=3.10 -y
 conda activate snapclass
 conda install -c conda-forge cmake dlib libsndfile ffmpeg pkg-config -y
 pip install -r requirements.txt
 ```
 
-Alternative (venv + pip):
+**Alternative (venv + pip):**
 
-```powershell
+```bash
 python -m venv venv
-.\\venv\\Scripts\\Activate.ps1
+.\venv\Scripts\Activate.ps1      # Windows
+# source venv/bin/activate       # macOS/Linux
+
 pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 ```
 
-3. Add Supabase secrets (create `.streamlit/secrets.toml`):
+### 3. Configure Supabase
+
+Create a `.streamlit/secrets.toml` file in the project root:
 
 ```toml
 SUPABASE_URL = "https://your-project.supabase.co"
 SUPABASE_KEY = "your-service-role-or-anon-key"
 ```
 
-4. Run the app:
+### 4. Run the app
 
-```powershell
+```bash
 streamlit run app.py
 ```
 
-Open the URL printed by Streamlit (default: `http://localhost:8501`).
-
-## What this project does
-
-- Uses `dlib` and `face_recognition_models` to extract 128-d face embeddings and an SVM classifier for identification.
-- Uses `resemblyzer` + `librosa` to create voice embeddings and perform speaker identification.
-- Stores users, subjects, enrollments, and attendance logs in Supabase tables (`teachers`, `students`, `subjects`, `subject_students`, `attendance_logs`).
-
-## Important notes & troubleshooting
-
-- Native dependencies: `dlib`, `libsndfile`, and some audio tooling require native libraries — use Conda on Windows to avoid build issues.
-- If `dlib` fails to build: install Visual Studio Build Tools (C++), CMake, or use a prebuilt wheel for your Python version.
-- `face_recognition_models` downloads pretrained model files during install; allow network access.
-- For audio processing: ensure `ffmpeg` is installed and in `PATH` and `libsndfile` is available (conda-forge package).
-
-## Development notes
-
-- Embeddings are stored on the student records in Supabase (`face_embedding`, `voice_embedding`).
-- `train_classifier()` in `src/pipelines/face_pipeline.py` clears cached resources and retrains the SVM from embeddings in the database.
-
-## Contributing
-
-1. Fork the repository.
-2. Create a topic branch and implement features / fixes.
-3. Run checks and open a pull request with a clear description.
-
-If you'd like, I can add a `CONTRIBUTING.md`, CI (GitHub Actions) to run lint/tests, or prepare a Dockerfile for consistent runtime.
-
-## License
-
-This repo currently has no license. Add a `LICENSE` file (e.g., MIT) to make the project open-source.
+Open the URL Streamlit prints in your terminal (default: `http://localhost:8501`).
 
 ---
 
-File: `README.md` updated and pushed to the `main` branch on GitHub.
-### 4. Install dependencies
+## 🧠 How It Works
+
+- **Face pipeline:** `dlib` and `face_recognition_models` extract 128-dimensional face embeddings from student photos/video frames. An SVM classifier is trained on these embeddings to identify students in real time.
+- **Voice pipeline:** `resemblyzer` and `librosa` generate voice embeddings used for speaker identification as an additional verification layer.
+- **Data model:** Student, subject, enrollment, and attendance records live in Supabase tables — `teachers`, `students`, `subjects`, `subject_students`, and `attendance_logs`. Face and voice embeddings are stored directly on each student's record.
+- **Retraining:** `train_classifier()` in `src/pipelines/face_pipeline.py` clears cached resources and retrains the SVM whenever new embeddings are added.
+
+---
+
+## 🩺 Troubleshooting
+
+| Issue | Fix |
+|---|---|
+| `dlib` fails to build | Install Visual Studio Build Tools (C++) and CMake, or use a prebuilt wheel matching your Python version |
+| Native dependency errors (`dlib`, `libsndfile`) | Prefer Conda on Windows — these require native libraries that pip alone can struggle with |
+| `face_recognition_models` install hangs | It downloads pretrained model files during install — make sure you have network access |
+| Audio processing errors | Ensure `ffmpeg` is installed and on your `PATH`, and `libsndfile` is available (install via `conda-forge`) |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repository
+2. Create a topic branch for your feature or fix
+3. Run checks locally and open a pull request with a clear description of your changes
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👤 Author
+
+**Ashish Kumar** ([@ashish117840](https://github.com/ashish117840))
+
+---
+
+<p align="center">⭐ If you find this project useful, consider giving it a star!</p>
