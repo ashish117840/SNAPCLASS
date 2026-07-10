@@ -1,153 +1,223 @@
-# SNAPCLASS
+# 🎓 SNAPCLASS – AI Video & Voice Attendance System
 
-> Making attendance faster using AI — face and voice based attendance system built with Streamlit and Supabase.
+<div align="center">
 
-## Table of contents
+![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge\&logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-Web_App-red?style=for-the-badge\&logo=streamlit)
+![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=for-the-badge\&logo=supabase)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-- Project overview
-- Features
-- Architecture / important files
-- Requirements & recommended environment
-- Local setup (Windows)
-- Supabase / secrets
-- Running the app
-- Troubleshooting & tips (dlib, audio, models)
-- Development notes
-- Contributing
-- License
+### Intelligent Attendance Management using AI-powered Face & Voice Recognition
 
-## Project overview
+🌐 **Live Demo:** https://snapclass-ashish-main.streamlit.app/
 
-SNAPCLASS is a Streamlit web app that provides automated attendance using face recognition and voice identification. It stores users and attendance logs in Supabase and includes pipelines for extracting face embeddings (dlib) and voice embeddings (`resemblyzer`).
-
-## Features
-
-- Teacher and student roles (login flows)
-- Face-based attendance using precomputed embeddings and an SVM classifier
-- Voice-based speaker identification for audio attendance
-- Subject management and enrollment
-- Supabase-backed persistent storage for users, subjects, and logs
-
-## Architecture / important files
-
-- `app.py` — Application entrypoint and routing to screens
-- `requirements.txt` — Python dependencies
-- `src/database/config.py` — Supabase client initialization (reads from Streamlit secrets)
-- `src/database/db.py` — Database helper functions (create users, subjects, attendance)
-- `src/pipelines/face_pipeline.py` — Face model loading, embedding extraction, classifier training/prediction
-- `src/pipelines/voice_pipeline.py` — Voice encoder and audio processing utilities
-- `src/screens/` — Streamlit UI screens (`home_screen.py`, `teacher_screen.py`, `student_screen.py`)
-- `src/components/` — Dialogs and UI components
-
-## Requirements & recommended environment
-
-This project depends on several packages that require native binaries. On Windows, using Conda is strongly recommended for easier native dependency management.
-
-- Python 3.9+ (3.10 recommended)
-- Recommended: Conda (Miniconda/Anaconda) for `dlib`, `libsndfile`, and audio dependencies
-- If using venv/pip you will need: Visual Studio Build Tools, CMake, and `ffmpeg` installed in PATH
-
-Key dependencies (from `requirements.txt`):
-
-- `streamlit`
-- `numpy`, `pandas`
-- `scikit-learn`, `dlib` (native), `face_recognition_models` (git)
-- `supabase` (python client)
-- `bcrypt`
-- `pillow`, `segno`
-- `librosa`, `resemblyzer` (audio)
-
-## Local setup (Windows)
-
-Option A — Conda (recommended):
-
-```powershell
-# create conda env
-conda create -n snapclass python=3.10 -y
-conda activate snapclass
-
-# install common binary deps first
-conda install -c conda-forge cmake dlib libsndfile ffmpeg pkg-config -y
-
-# then pip install python packages
-pip install -r requirements.txt
-```
-
-Option B — venv + pip (may require build tools):
-
-```powershell
-python -m venv venv
-.\\venv\\Scripts\\Activate.ps1
-pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
-```
-
-Notes:
-- If `dlib` fails to build, install Visual Studio Build Tools and CMake, or use a prebuilt wheel.
-- `face_recognition_models` is installed directly from GitHub (see `requirements.txt`).
-- Install `ffmpeg` and ensure it's on PATH for audio processing.
-
-## Supabase / secrets
-
-The app reads Supabase credentials from Streamlit secrets. Create `.streamlit/secrets.toml` in the project root with:
-
-```toml
-SUPABASE_URL = "https://your-project.supabase.co"
-SUPABASE_KEY = "your-service-role-or-anon-key"
-```
-
-Alternatively, you can set these values as environment variables and update `src/database/config.py` accordingly.
-
-## Running the app
-
-Start Streamlit from the project root:
-
-```powershell
-.\\venv\\Scripts\\Activate.ps1   # or `conda activate snapclass`
-streamlit run app.py
-```
-
-Open the local URL printed by Streamlit (usually `http://localhost:8501`).
-
-## Troubleshooting & tips
-
-- dlib build errors on Windows:
-  - Install Visual Studio Build Tools (C++), CMake, and ensure they are on PATH.
-  - Prefer Conda and `conda install -c conda-forge dlib` or use a prebuilt wheel for your Python version.
-
-- face_recognition_models:
-  - This package downloads pre-trained model files; allow network access during `pip install`.
-
-- resemblyzer / librosa audio errors:
-  - Install `libsndfile` (conda-forge) and `ffmpeg` system binary.
-  - If `librosa` raises `audioread` errors, ensure `ffmpeg` is installed and in PATH.
-
-- Performance / memory:
-  - Face and voice models can be memory-heavy. For large classes, consider batching or smaller sample rates.
-
-- Streamlit session state & secrets:
-  - If Supabase keys are missing, the app will fail at `src/database/config.py`. Add secrets before running.
-
-## Development notes
-
-- To retrain face classifier the UI triggers `train_classifier()` which clears cached resources in `src/pipelines/face_pipeline.py`.
-- Embeddings are stored per-student in Supabase (fields: `face_embedding`, `voice_embedding`).
-- Database helper functions live in `src/database/db.py` — extend these for additional queries.
-
-## Contributing
-
-1. Fork the repo and create a feature branch.
-2. Run tests (if added) and linters locally.
-3. Submit a PR with a clear description of changes.
-
-## License
-
-This repository does not include a license file. If you want to open-source it, consider adding an `LICENSE` (MIT is common).
+</div>
 
 ---
 
-If you'd like, I can also:
+## 📖 Overview
 
-- Add this README to the repo now (I will). 
-- Add a short `CONTRIBUTING.md` or CI notes for Windows builds.
-- Try installing the environment in your workspace and run `streamlit` to verify.
+**SNAPCLASS** is an AI-powered attendance management system that automates classroom attendance using **face recognition** and **voice recognition**. It eliminates manual attendance, improves accuracy, and provides teachers with an easy-to-use dashboard for managing classes and attendance records.
+
+The application is built with **Python**, **Streamlit**, and **Supabase**, making it lightweight, scalable, and easy to deploy.
+
+---
+
+## ✨ Features
+
+* 👨‍🏫 Teacher Dashboard
+* 👨‍🎓 Student Management
+* 📚 Subject Management
+* 🤖 AI-Based Face Recognition
+* 🎤 Voice Recognition Support
+* ✅ Automatic Attendance Marking
+* 📊 Attendance Logs
+* ☁️ Supabase Database Integration
+* 🌐 Responsive Streamlit Interface
+* 🔒 Secure Authentication (Planned)
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology         | Purpose              |
+| ------------------ | -------------------- |
+| Python             | Backend Logic        |
+| Streamlit          | Web Application      |
+| Supabase           | Database & Backend   |
+| PostgreSQL         | Data Storage         |
+| OpenCV             | Face Detection       |
+| Speech Recognition | Voice Recognition    |
+| NumPy              | Numerical Operations |
+| Pandas             | Data Processing      |
+
+---
+
+## 📂 Project Structure
+
+```text
+SNAPCLASS/
+│
+├── assets/
+├── docs/
+├── src/
+│   ├── components/
+│   ├── database/
+│   ├── models/
+│   ├── ui/
+│   ├── utils/
+│   └── services/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+└── .streamlit/
+```
+
+---
+
+## 🚀 Live Demo
+
+Experience the application here:
+
+**https://snapclass-ashish-main.streamlit.app/**
+
+---
+
+## ⚙️ Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/ashish117840/SNAPCLASS.git
+```
+
+### 2. Move into the project
+
+```bash
+cd SNAPCLASS
+```
+
+### 3. Create a virtual environment
+
+**Windows**
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**Linux / macOS**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 4. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 5. Configure Streamlit Secrets
+
+Create:
+
+```text
+.streamlit/secrets.toml
+```
+
+Example:
+
+```toml
+SUPABASE_URL="your_supabase_url"
+SUPABASE_KEY="your_supabase_anon_key"
+```
+
+### 6. Run the application
+
+```bash
+streamlit run app.py
+```
+
+---
+
+## 🗄️ Database
+
+The project uses **Supabase PostgreSQL**.
+
+Main tables include:
+
+* Teachers
+* Students
+* Subjects
+* Subject Students
+* Attendance Logs
+
+---
+
+## 📸 AI Modules
+
+### Face Recognition
+
+* Face detection
+* Face embedding generation
+* Student identification
+
+### Voice Recognition
+
+* Voice embedding
+* Speaker verification
+* Attendance confirmation
+
+---
+
+## 📊 Future Improvements
+
+* Email Notifications
+* QR Code Attendance
+* Multi-Class Support
+* Attendance Analytics
+* Export to Excel/PDF
+* Admin Dashboard
+* Mobile Application
+* AI Performance Optimization
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push to your branch.
+5. Open a Pull Request.
+
+---
+
+## 👨‍💻 Author
+
+**Ashish Kumar**
+
+* GitHub: https://github.com/ashish117840
+
+---
+
+## ⭐ Support
+
+If you found this project useful:
+
+⭐ Star the repository
+
+🍴 Fork the repository
+
+📢 Share it with others
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
