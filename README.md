@@ -41,6 +41,17 @@ Built entirely in **Python**, powered by **Streamlit** for the interface and **S
 
 ---
 
+## 🧩 Models Used
+
+| Model | Task | Output |
+|---|---|---|
+| `dlib` face detector + shape predictor | Face detection & alignment | Bounding box + aligned face |
+| `face_recognition_models` (pre-trained) | Face embedding | 128-d face vector |
+| SVM (trained on collected embeddings) | Face classification | Predicted student identity |
+| `resemblyzer` (pre-trained encoder) | Speaker embedding | 256-d voice vector |
+
+---
+
 ## 📂 Project Structure
 
 ```
@@ -111,10 +122,47 @@ Open the URL Streamlit prints in your terminal (default: `http://localhost:8501`
 
 ## 🧠 How It Works
 
-- **Face pipeline:** `dlib` and `face_recognition_models` extract 128-dimensional face embeddings from student photos/video frames. An SVM classifier is trained on these embeddings to identify students in real time.
-- **Voice pipeline:** `resemblyzer` and `librosa` generate voice embeddings used for speaker identification as an additional verification layer.
-- **Data model:** Student, subject, enrollment, and attendance records live in Supabase tables — `teachers`, `students`, `subjects`, `subject_students`, and `attendance_logs`. Face and voice embeddings are stored directly on each student's record.
-- **Retraining:** `train_classifier()` in `src/pipelines/face_pipeline.py` clears cached resources and retrains the SVM whenever new embeddings are added.
+SnapClass verifies each student through two independent biometric signals — face and voice — before marking attendance.
+
+```
+                Student
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+     Camera                Microphone
+        │                     │
+        ▼                     ▼
+ Face Detection         Voice Recording
+        │                     │
+        ▼                     ▼
+ Face Embedding         Voice Embedding
+        │                     │
+        └──────────┬──────────┘
+                    ▼
+          Student Verification
+                    ▼
+           Attendance Marked
+                    ▼
+          Supabase Database
+```
+
+**Face pipeline**
+1. **Detection & alignment (`dlib`)** — locates the face in the camera frame as a bounding box, then aligns it (eyes horizontal, nose centered) to normalize pose before recognition.
+2. **Embedding (`face_recognition_models`)** — converts each aligned face into a **128-dimensional embedding**, a compact numerical fingerprint of that person's facial features, instead of storing raw images.
+3. **Classification (SVM)** — a Support Vector Machine is trained on the embeddings collected per student during registration. At attendance time, it predicts the closest matching student from a live embedding. SVM was chosen because it's fast, accurate, and works well on the small-to-medium datasets typical of a classroom roster.
+
+**Voice pipeline**
+1. **Preprocessing (`librosa`)** — loads, resamples, and cleans the audio sample.
+2. **Speaker embedding (`resemblyzer`)** — generates a **256-dimensional embedding** that captures *vocal characteristics*, not spoken words — this is speaker recognition ("who is speaking"), not speech-to-text.
+3. **Verification** — the live voice embedding is compared against the student's stored embedding as a secondary identity check alongside the face match.
+
+**Why embeddings instead of raw images/audio?** Embeddings are compact, fast to compare, and easy to classify — full images/audio clips are far more expensive to store and match at scale.
+
+**Why not train a deep model from scratch?** Face and voice recognition here rely on pre-trained deep learning models (via `dlib`/`face_recognition_models` and `resemblyzer`) to generate embeddings — this is transfer learning. Only the final identity classification step (the SVM) is trained on your own data, which needs far less data and compute than training a CNN from scratch.
+
+**Data model:** Student, subject, enrollment, and attendance records live in Supabase (PostgreSQL) tables — `teachers`, `students`, `subjects`, `subject_students`, and `attendance_logs`. Each student's face and voice embeddings are stored directly on their record rather than as local files.
+
+**Retraining:** `train_classifier()` in `src/pipelines/face_pipeline.py` clears cached resources and retrains the SVM whenever new student embeddings are added.
 
 ---
 
